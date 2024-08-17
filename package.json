@@ -1,0 +1,26 @@
+{
+  "name": "tp5",
+  "version": "1.0.0",
+  "description": "Tarea de backend",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manumartin27/modulo5_FS2024.git"
+  },
+  "author": "Manuel Martin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/manumartin27/modulo5_FS2024/issues"
+  },
+  "homepage": "https://github.com/manumartin27/modulo5_FS2024#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "morgan": "^1.10.0",
+    "mysql": "^2.18.1",
+    "rootpath": "^0.1.2"
+  }
+}
