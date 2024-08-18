@@ -19,14 +19,20 @@ var metodos = {}
 
 // --> app.get("/", listarTodo());  --> ingreso = ingresoBD.getAll((err, result) => {}
 metodos.getAll = function (callback) {
-    consulta = "select * from ingreso";
+    consulta = `SELECT ingreso.*,
+                CONCAT(paciente.apellido, ', ', paciente.nombre) AS ApeNomPaciente, 
+                CONCAT(medico.apellido, ', ', medico.nombre) AS ApeNomMedico
+                FROM ingreso
+                INNER JOIN paciente ON ( paciente.nro_historial_clinico = ingreso.nro_historial_paciente )
+                INNER JOIN medico ON ( medico.matricula = ingreso.matricula_medico )
+                ORDER BY ingreso.id_ingreso`;
     connection.query(consulta, function (err, resultados, fields) {
         if (err) {
             callback(err);
             return;
         } else {
             callback(undefined, {
-                messaje: "Resultados de la consulta",
+                messaje: "Resultados de la consulta: ",
                 detail: resultados,
             });
         }
@@ -51,12 +57,12 @@ metodos.crearIngreso = function (datosIngreso, callback) {
         if (err) {
             if (err.code = "ER_DUP_ENTRY") {
                 callback({
-                    message: "ya existe un ingreso con el id " + datosIngreso.id_ingreso,
+                    message: "Ya existe un ingreso con el id " + datosIngreso.id_ingreso,
                     detail: err.sqlMessage
                 })
             } else {
                 callback({
-                    message: "otro error que no conocemos",
+                    message: "Error (no ER_DUP_ENTRY)",
                     detail: err.sqlMessage
                 })
             }
@@ -64,28 +70,9 @@ metodos.crearIngreso = function (datosIngreso, callback) {
 
         } else {
             callback(undefined, {
-                message: "el ingreso " + datosIngreso.id_ingreso + " se registro correctamente",
+                message: "El ingreso " + datosIngreso.id_ingreso + " se registró correctamente",
                 detail: rows,
             })
-        }
-    });
-}
-
-// -->  app.delete("/:id_ingreso", eliminarIngreso);   -->   ingresoBD.metodos.deleteIngreso(req.params.id_ingreso, (err, exito) => {}); 
-metodos.deleteIngreso = function (id_ingreso, callback) {
-    consulta = "delete from ingreso where id_ingreso = ?";
-    connection.query(consulta, id_ingreso, function (err, rows, fields) {
-        if (err) {
-            callback({
-                message: "ha ocurrido un error",
-                detail: err,
-            });
-        }
-
-        if (rows.affectedRows == 0) {
-            callback(undefined, "No se encontro un ingreso con el id " + id_ingreso);
-        } else {
-            callback(undefined, "el ingreso " + id_ingreso + " fue eliminado de la Base de datos");
         }
     });
 }

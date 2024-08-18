@@ -17,8 +17,6 @@ const ingresoBD = require("./../models/ingresoModel.js");
 app.get("/", listarTodo);
 app.post('/create', crear);
 
-app.delete("/:id_ingreso", eliminarIngreso);
-
 
 // --------------------------------------------------------
 // ---------FUNCIONES UTILIZADAS EN ENDPOINTS -------------
@@ -43,16 +41,6 @@ function crear(req, res) {
             res.json(exito);
         }
     });
-}
-
-function eliminarIngreso(req, res) {
-    ingresoBD.metodos.deleteIngreso(req.params.id_ingreso, (err, exito) => {
-        if (err) {
-            res.status(500).json(err);
-        } else {
-            res.send(exito)
-        }
-    })
 }
 
 //exportamos app que es nuestro servidor express a la cual se le agregaron endpoinds de escucha
