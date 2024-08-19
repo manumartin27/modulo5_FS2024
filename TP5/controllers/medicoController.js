@@ -16,7 +16,7 @@ const medicoBD = require("./../models/medicoModel.js");
 app.get("/", listarTodo);
 app.get("/:especialidad", getByEspecialidad);
 app.post('/create', crear);
-app.get('/:matricula', obtenerMedico);
+app.get('/pk/:matricula', obtenerMedico); // se agregó "pk/" para evitar confusiones con las rutas
 app.delete("/:matricula", eliminarMedico);
 app.put("/:matricula", modificarMedico);
 
@@ -61,18 +61,15 @@ function crear(req, res) {
 
 function obtenerMedico(req, res) {
     let matricula = req.params.matricula;
-    medicoBD.metodos.getMedico(matricula, () => {
-        (err, exito) => {
+    medicoBD.metodos.getMedico(matricula, (err, exito) => {
             if (err) {
                 res.status(500).send(err)
             } else {
                 res.status(200).send(exito)
             }
         }
-    });
+    );
 }
-
-//app.put("/:matricula", modificarMedico);
 
 
 function modificarMedico(req, res) {
@@ -82,7 +79,7 @@ function modificarMedico(req, res) {
         if (err) {
             res.status(500).send(err)
         } else {
-            res.status(200).send(exito) //medico modificado
+            res.status(200).send(exito) 
         }
     });
 }
@@ -98,5 +95,5 @@ function eliminarMedico(req, res) {
     })
 }
 
-//exportamos app que es nuestro servidor express a la cual se le agregaron endpoinds de escucha
+//exportamos a app que es nuestro servidor express a la cual se le agregaron endpoinds de escucha
 module.exports = app;

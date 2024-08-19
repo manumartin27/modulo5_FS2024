@@ -42,7 +42,7 @@ metodos.getMedico = function (matricula, callback) {
             callback(err);
         } else {
             if (resultados.length == 0) {
-                callback(undefined, "no se encontro un medico con la matricula:" + matricula)
+                callback(undefined, "No se encontró un médico con la matrícula " + matricula)
             } else {
                 callback(undefined, {
                     messaje: "Resultados de la consulta",
@@ -54,18 +54,19 @@ metodos.getMedico = function (matricula, callback) {
     });
 
 }
-metodos.getByEspecialidad = function (especiliadad, callback) {
+
+metodos.getByEspecialidad = function (especialidad, callback) {
     consulta = "select * from medico where especialidad = ?";
 
-    connection.query(consulta, especiliadad, function (err, resultados, fields) {
+    connection.query(consulta, especialidad, function (err, resultados, fields) {
         if (err) {
             callback(err);
         } else {
             if (resultados.length == 0) {
-                callback(undefined, "no se encontro un medico con la especialidad:" + especiliadad)
+                callback(undefined, "No se encontró un médico con la especialidad " + especialidad)
             } else {
                 callback(undefined, {
-                    messaje: "Resultados de la consulta con la especialidad " + especiliadad,
+                    messaje: "Resultados de la consulta con la especialidad " + especialidad,
                     detail: resultados,
                 });
             }
@@ -86,24 +87,40 @@ metodos.update = function (datosMedico, deTalMedico, callback) {
         datosMedico.observaciones,
         parseInt(deTalMedico)
     ];
-    consulta = "update medico set  matricula = ?, nombre = ?, apellido = ?, especialidad = ?, observaciones = ? WHERE matricula = ?";
+    consulta = `update medico set  matricula = ?, 
+                                    nombre = ?, 
+                                    apellido = ?, 
+                                    especialidad = ?, 
+                                    observaciones = ? 
+                                    WHERE matricula = ?`;
 
 
     connection.query(consulta, datos, (err, rows) => {
         if (err) {
-            callback(err);
+            if (err.code = "ER_DUP_ENTRY") {
+                callback({
+                    message: "Ya existe un médico con la matrícula " + datosMedico.matricula,
+                    detail: err.sqlMessage
+                })
+            } else {
+                callback({
+                    message: "Error (no ER_DUP_ENTRY)",
+                    detail: err.sqlMessage
+                })
+            }
+
         } else {
 
             if (rows.affectedRows == 0) {
                 callback(undefined, {
                     message:
-                        `no se encontro un medico con la matricula ${deTalMedico}`,
+                        `No se encontró un médico con la matrícula ${deTalMedico}`,
                     detail: rows,
                 })
             } else {
                 callback(undefined, {
                     message:
-                        `el medico ${datosMedico.nombre} se actualizo correctamente`,
+                        `El médico ${datosMedico.nombre} se actualizó correctamente`,
                     detail: rows,
                 })
             }
@@ -124,18 +141,19 @@ metodos.crearMedico = function (datosMedico, callback) {
         datosMedico.observaciones,
     ];
     consulta =
-        "INSERT INTO MEDICO (matricula, nombre, apellido, especialidad, observaciones) VALUES (?, ?, ?, ?, ?)";
+        `INSERT INTO MEDICO (matricula, nombre, apellido, especialidad, observaciones) 
+         VALUES (?, ?, ?, ?, ?)`;
 
     connection.query(consulta, medico, (err, rows) => {
         if (err) {
             if (err.code = "ER_DUP_ENTRY") {
                 callback({
-                    message: "ya existe un medico con la matricula " + datosMedico.matricula,
+                    message: "Ya existe un médico con la matrícula " + datosMedico.matricula,
                     detail: err.sqlMessage
                 })
             } else {
                 callback({
-                    message: "otro error que no conocemos",
+                    message: "Error (no ER_DUP_ENTRY)",
                     detail: err.sqlMessage
                 })
             }
@@ -143,7 +161,7 @@ metodos.crearMedico = function (datosMedico, callback) {
 
         } else {
             callback(undefined, {
-                message: "el medico " + datosMedico.nombre + " " + datosMedico.apellido + "se registro correctamente",
+                message: "El médico " + datosMedico.nombre + " " + datosMedico.apellido + " se registró correctamente",
                 detail: rows,
             })
         }
@@ -156,15 +174,15 @@ metodos.deleteMedico = function (matricula, callback) {
     connection.query(consulta, matricula, function (err, rows, fields) {
         if (err) {
             callback({
-                message: "ha ocurrido un error",
+                message: "Ocurrió un error",
                 detail: err,
             });
         }
 
         if (rows.affectedRows == 0) {
-            callback(undefined, "No se encontro un medico con la matricula " + matricula);
+            callback(undefined, "No se encontró un médico con la matrícula " + matricula);
         } else {
-            callback(undefined, "el medico " + matricula + " fue eliminado de la Base de datos");
+            callback(undefined, "El médico " + matricula + " fue eliminado de la database MEDICO");
         }
     });
 }

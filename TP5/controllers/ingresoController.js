@@ -6,7 +6,6 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 const ingresoBD = require("./../models/ingresoModel.js");
 
 
@@ -43,5 +42,5 @@ function crear(req, res) {
     });
 }
 
-//exportamos app que es nuestro servidor express a la cual se le agregaron endpoinds de escucha
+//exportamos a app que es nuestro servidor express a la cual se le agregaron endpoinds de escucha
 module.exports = app;

@@ -14,11 +14,9 @@ const pacienteBD = require("./../models/pacienteModel.js");
 // --------------------------------------------------------
 
 app.get("/", listarTodo);
-
 app.get("/:nss", getByNSS);
-
 app.post('/create', crear);
-app.get('/:nhc', obtenerPaciente);
+app.get('/pk/:nhc', obtenerPaciente); // se agregó "pk/" para evitar confusiones con las rutas
 app.delete("/:nhc", eliminarPaciente);
 app.put("/:nhc", modificarPaciente);
 
@@ -63,19 +61,15 @@ function crear(req, res) {
 
 function obtenerPaciente(req, res) {
     let nhc = req.params.nhc;
-    pacienteBD.metodos.getPaciente(nhc, () => {
-        (err, exito) => {
+    pacienteBD.metodos.getPaciente(nhc, (err, exito) => {
             if (err) {
                 res.status(500).send(err)
             } else {
                 res.status(200).send(exito)
             }
         }
-    });
+    );
 }
-
-//app.put("/:nhc", modificarPaciente);
-
 
 
 function modificarPaciente(req, res) {
@@ -85,7 +79,7 @@ function modificarPaciente(req, res) {
         if (err) {
             res.status(500).send(err)
         } else {
-            res.status(200).send(exito) //paciente modificado exitosamente
+            res.status(200).send(exito) 
         }
     });
 }
@@ -101,5 +95,5 @@ function eliminarPaciente(req, res) {
     })
 }
 
-//exportamos app que es nuestro servidor express a la cual se le agregaron endpoinds de escucha
+//exportamos a app que es nuestro servidor express a la cual se le agregaron endpoinds de escucha
 module.exports = app;

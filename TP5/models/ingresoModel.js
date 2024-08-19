@@ -51,7 +51,8 @@ metodos.crearIngreso = function (datosIngreso, callback) {
         datosIngreso.matricula_medico
     ];
     consulta =
-        "INSERT INTO INGRESO (id_ingreso, fecha_ingreso, nro_habitacion, nro_cama, observaciones, nro_historial_paciente, matricula_medico) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        `INSERT INTO INGRESO (id_ingreso, fecha_ingreso, nro_habitacion, nro_cama, observaciones, nro_historial_paciente, matricula_medico) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
     connection.query(consulta, ingreso, (err, rows) => {
         if (err) {

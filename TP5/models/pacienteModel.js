@@ -43,7 +43,7 @@ metodos.getPaciente = function (nhc, callback) {
             callback(err);
         } else {
             if (resultados.length == 0) {
-                callback(undefined, "no se encontro un paciente con el nhc:" + nhc)
+                callback(undefined, "No se encontró un paciente con el número de historial clínico " + nhc)
             } else {
                 callback(undefined, {
                     messaje: "Resultados de la consulta",
@@ -64,10 +64,10 @@ metodos.getByNSS = function (nss, callback) {
             callback(err);
         } else {
             if (resultados.length == 0) {
-                callback(undefined, "no se encontro un paciente con el nss:" + nss)
+                callback(undefined, "No se encontró un paciente con el NSS " + nss)
             } else {
                 callback(undefined, {
-                    messaje: "Resultados de la consulta con el nss" + nss,
+                    messaje: "Resultados de la consulta con el NSS " + nss,
                     detail: resultados,
                 });
             }
@@ -91,24 +91,43 @@ metodos.update = function (datosPaciente, deTalPaciente, callback) {
         datosPaciente.observaciones,
         parseInt(deTalPaciente)
     ];
-    consulta = "update paciente set nss = ?, nombre = ?, apellido = ?, domicilio = ?, codigo_postal = ?, telefono = ?, nro_historial_clinico = ?, observaciones = ? WHERE nro_historial_clinico = ?";
+    consulta = `update paciente set nss = ?, 
+                                    nombre = ?, 
+                                    apellido = ?, 
+                                    domicilio = ?, 
+                                    codigo_postal = ?, 
+                                    telefono = ?, 
+                                    nro_historial_clinico = ?, 
+                                    observaciones = ? 
+                                    WHERE nro_historial_clinico = ?`;
 
 
     connection.query(consulta, datos, (err, rows) => {
         if (err) {
-            callback(err);
+            if (err.code = "ER_DUP_ENTRY") {
+                callback({
+                    message: "Ya existe un paciente con el número de historial clínico " + datosPaciente.nro_historial_clinico,
+                    detail: err.sqlMessage
+                })
+            } else {
+                callback({
+                    message: "Error (no ER_DUP_ENTRY)",
+                    detail: err.sqlMessage
+                })
+            }
+
         } else {
 
             if (rows.affectedRows == 0) {
                 callback(undefined, {
                     message:
-                        `no se encontro un paciente con el nhc ${deTalPaciente}`,
+                        `No se encontró un paciente con el número de historial clínico ${deTalPaciente}`,
                     detail: rows,
                 })
             } else {
                 callback(undefined, {
                     message:
-                        `el paciente ${datosPaciente.nombre} se actualizo correctamente`,
+                        `El paciente ${datosPaciente.nombre} se actualizó correctamente`,
                     detail: rows,
                 })
             }
@@ -132,18 +151,19 @@ metodos.crearPaciente = function (datosPaciente, callback) {
         datosPaciente.observaciones
     ];
     consulta =
-        "INSERT INTO PACIENTE (nss, nombre, apellido, domicilio, codigo_postal, telefono, nro_historial_clinico, observaciones) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        `INSERT INTO PACIENTE (nss, nombre, apellido, domicilio, codigo_postal, telefono, nro_historial_clinico, observaciones) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
     connection.query(consulta, paciente, (err, rows) => {
         if (err) {
             if (err.code = "ER_DUP_ENTRY") {
                 callback({
-                    message: "ya existe un paciente con el nhc " + datosPaciente.nro_historial_clinico,
+                    message: "Ya existe un paciente con el número de historial clínico " + datosPaciente.nro_historial_clinico,
                     detail: err.sqlMessage
                 })
             } else {
                 callback({
-                    message: "otro error que no conocemos",
+                    message: "Error (no ER_DUP_ENTRY)",
                     detail: err.sqlMessage
                 })
             }
@@ -151,7 +171,7 @@ metodos.crearPaciente = function (datosPaciente, callback) {
 
         } else {
             callback(undefined, {
-                message: "el paciente " + datosPaciente.nombre + " " + datosPaciente.apellido + "se registro correctamente",
+                message: "El paciente " + datosPaciente.nombre + " " + datosPaciente.apellido + " se registró correctamente",
                 detail: rows,
             })
         }
@@ -164,15 +184,15 @@ metodos.deletePaciente = function (nhc, callback) {
     connection.query(consulta, nhc, function (err, rows, fields) {
         if (err) {
             callback({
-                message: "ha ocurrido un error",
+                message: "Ocurrió un error",
                 detail: err,
             });
         }
 
         if (rows.affectedRows == 0) {
-            callback(undefined, "No se encontro un paciente con el nhc " + nhc);
+            callback(undefined, "No se encontró un paciente con el número de historial clínico " + nhc);
         } else {
-            callback(undefined, "el paciente " + nhc + " fue eliminado de la Base de datos");
+            callback(undefined, "El paciente " + nhc + " fue eliminado de la database PACIENTE");
         }
     });
 }
