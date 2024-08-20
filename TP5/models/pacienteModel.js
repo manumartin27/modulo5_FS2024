@@ -7,6 +7,10 @@ const { query } = require('express');
 // Agregue las credenciales para acceder a su base de datos
 const connection = mysql.createConnection(configuracion.database);
 
+/*
+Se conecta con la base de datos.
+Si falla, se muestra el error. Si no, se muestra un mensaje de exito.
+*/
 connection.connect((err) => {
     if (err) {
         console.log(err.code);
@@ -15,6 +19,7 @@ connection.connect((err) => {
     }
 });
 
+//Se declara un objeto donde irán las interacciones con la base de datos
 var metodos = {}
 
 // --> app.get("/", listarTodo());  --> paciente = pacienteBD.getAll((err, result) => {}
@@ -34,7 +39,7 @@ metodos.getAll = function (callback) {
 }
 
 // nhc = nro_historial_clinico
-// --> app.get('/:nhc', obtenerPaciente);  -->  pacienteBD.getPaciente(nhc, () => {})
+// --> app.get('/pk/:nhc', obtenerPaciente);  -->  pacienteBD.getPaciente(nhc, () => {})
 metodos.getPaciente = function (nhc, callback) {
     consulta = "select * from paciente where nro_historial_clinico = ?";
 
@@ -56,6 +61,7 @@ metodos.getPaciente = function (nhc, callback) {
 
 }
 
+// --> app.get('/:nss', getByNSS);  -->  pacienteBD.getByNSS(nss, () => {})
 metodos.getByNSS = function (nss, callback) {
     consulta = "select * from paciente where nss = ?";
 
@@ -138,7 +144,7 @@ metodos.update = function (datosPaciente, deTalPaciente, callback) {
 
 }
 
-//--> pacienteBD.metodos.crearPaciente(req.body, (err, exito) => {});
+//--> app.post('/create', crear);  -->  pacienteBD.metodos.crearPaciente(req.body, (err, exito) => {});
 metodos.crearPaciente = function (datosPaciente, callback) {
     paciente = [
         datosPaciente.nss,
@@ -197,4 +203,5 @@ metodos.deletePaciente = function (nhc, callback) {
     });
 }
 
+//Se exporta el objeto con las interacciones predefinidas
 module.exports = { metodos }

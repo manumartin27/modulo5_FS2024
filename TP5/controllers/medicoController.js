@@ -95,5 +95,5 @@ function eliminarMedico(req, res) {
     })
 }
 
-//exportamos a app que es nuestro servidor express a la cual se le agregaron endpoinds de escucha
+//exportamos a app que es nuestro servidor express al cual se le agregaron endpoinds de escucha
 module.exports = app;

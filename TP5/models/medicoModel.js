@@ -7,6 +7,10 @@ const { query } = require('express');
 // Agregue las credenciales para acceder a su base de datos
 const connection = mysql.createConnection(configuracion.database);
 
+/*
+Se conecta con la base de datos.
+Si falla, se muestra el error. Si no, se muestra un mensaje de exito.
+*/
 connection.connect((err) => {
     if (err) {
         console.log(err.code);
@@ -15,6 +19,7 @@ connection.connect((err) => {
     }
 });
 
+//Se declara un objeto donde irán las interacciones con la base de datos
 var metodos = {}
 
 // --> app.get("/", listarTodo());  --> medicos = medicoBD.getAll((err, result) => {}
@@ -33,7 +38,7 @@ metodos.getAll = function (callback) {
     });
 }
 
-// --> app.get('/:matricula', obtenerMedico);  -->  medicoBD.getMedico(matricula, () => {})
+// --> app.get('/pk/:matricula', obtenerMedico);  -->  medicoBD.getMedico(matricula, () => {})
 metodos.getMedico = function (matricula, callback) {
     consulta = "select * from medico where matricula = ?";
 
@@ -55,6 +60,7 @@ metodos.getMedico = function (matricula, callback) {
 
 }
 
+// --> app.get("/:especialidad", getByEspecialidad);  -->  medicoBD.getByEspecialidad(especialidad, () => {})
 metodos.getByEspecialidad = function (especialidad, callback) {
     consulta = "select * from medico where especialidad = ?";
 
@@ -131,7 +137,7 @@ metodos.update = function (datosMedico, deTalMedico, callback) {
 
 }
 
-//--> medicoBD.metodos.crearMedico(req.body, (err, exito) => {});
+//--> app.post('/create', crear);  -->  medicoBD.metodos.crearMedico(req.body, (err, exito) => {});
 metodos.crearMedico = function (datosMedico, callback) {
     medico = [
         datosMedico.matricula,
@@ -187,4 +193,5 @@ metodos.deleteMedico = function (matricula, callback) {
     });
 }
 
+//Se exporta el objeto con las interacciones predefinidas
 module.exports = { metodos }

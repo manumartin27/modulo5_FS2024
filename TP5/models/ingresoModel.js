@@ -7,6 +7,10 @@ const { query } = require('express');
 // Agregue las credenciales para acceder a su base de datos
 const connection = mysql.createConnection(configuracion.database);
 
+/*
+Se conecta con la base de datos.
+Si falla, se muestra el error. Si no, se muestra un mensaje de exito.
+*/
 connection.connect((err) => {
     if (err) {
         console.log(err.code);
@@ -15,6 +19,7 @@ connection.connect((err) => {
     }
 });
 
+//Se declara un objeto donde irán las interacciones con la base de datos
 var metodos = {}
 
 // --> app.get("/", listarTodo());  --> ingreso = ingresoBD.getAll((err, result) => {}
@@ -39,7 +44,7 @@ metodos.getAll = function (callback) {
     });
 }
 
-//--> ingresoBD.metodos.crearIngreso(req.body, (err, exito) => {});
+//--> app.post('/create', crear);  -->  ingresoBD.metodos.crearIngreso(req.body, (err, exito) => {});
 metodos.crearIngreso = function (datosIngreso, callback) {
     ingreso = [
         datosIngreso.id_ingreso,
@@ -78,4 +83,5 @@ metodos.crearIngreso = function (datosIngreso, callback) {
     });
 }
 
+//Se exporta el objeto con las interacciones predefinidas
 module.exports = { metodos }
